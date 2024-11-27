@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+<<<<<<< HEAD
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -17,12 +18,23 @@ jobs:
       run: |
         cd backend
         npm install
+=======
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js for Backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+        working-directory: backend
+>>>>>>> 886f123 (Add feature to dev  workflows)
 
     - name: Run backend unit tests
       run: |
         cd backend
         npm test
 
+<<<<<<< HEAD
     - name: Install dependencies for frontend
       run: |
         cd frontend
@@ -39,3 +51,29 @@ jobs:
       with:
         target_branch: main
         github_token: ${{ secrets.PAT_TOKEN }}
+=======
+      - name: Run Unit Tests (Backend)
+        working-directory: backend
+        run: npm test
+
+      - name: Set up Node.js for Frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+        working-directory: frontend
+
+      - name: Install Dependencies (Frontend)
+        working-directory: frontend
+        run: npm install
+
+      - name: Run Unit Tests (Frontend)
+        working-directory: frontend
+        run: npm test
+
+      - name: Merge Dev into Main
+        uses: devops-actions/merge-branch@v2
+        with:
+          from_branch: dev
+          target_branch: main
+          github_token: ${{ secrets.PAT_TOKEN }}
+>>>>>>> 886f123 (Add feature to dev  workflows)
