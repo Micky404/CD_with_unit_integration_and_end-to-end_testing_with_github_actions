@@ -10,35 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Install Dependencies and Run Tests for Backend
-      - name: Install Dependencies (Backend)
-        run: |
-          cd backend
-          npm install
+    - name: Install dependencies for backend
+      run: |
+        cd backend
+        npm install
 
-      - name: Run Unit Tests (Backend)
-        run: |
-          cd backend
-          npm test
+    - name: Run backend unit tests
+      run: |
+        cd backend
+        npm test
 
-      # Install Dependencies and Run Tests for Frontend
-      - name: Install Dependencies (Frontend)
-        run: |
-          cd frontend
-          npm install
+    - name: Install dependencies for frontend
+      run: |
+        cd frontend
+        npm install
 
-      - name: Run Unit Tests (Frontend)
-        run: |
-          cd frontend
-          npm test
+    - name: Run frontend unit tests
+      run: |
+        cd frontend
+        npm test
 
-      # Merge Dev into Main Branch
-      - name: Merge Dev into Main
-        uses: devops-actions/merge-branch@v2
-        with:
-          from_branch: dev
-          target_branch: main
-          github_token: ${{ secrets.PAT_TOKEN }}
+    - name: Merge dev to main
+      if: success()
+      uses: devmasx/merge-branch@v1.3.0
+      with:
+        target_branch: main
+        github_token: ${{ secrets.PAT_TOKEN }}
