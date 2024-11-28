@@ -1,5 +1,5 @@
 version: '3'
-
+## test
 services:
   mongodb:
     image: mongo:latest
@@ -12,6 +12,7 @@ services:
       - app-network
 
   backend:
+    image: mickaelpre/backend:latest  
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -27,6 +28,7 @@ services:
       - app-network
 
   frontend:
+    image: mickaelpre/frontend:latest  
     build:
       context: ./frontend
       dockerfile: Dockerfile

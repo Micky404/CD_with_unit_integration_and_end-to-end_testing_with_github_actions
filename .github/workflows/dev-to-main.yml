@@ -1,10 +1,11 @@
 name: Dev to Main CI/CD
 
 on:
-  push:
-    branches:
-      - main
-
+  workflow_run:
+    workflows:
+      - Feature to Dev CI
+    types:
+      - completed
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
