@@ -38,4 +38,4 @@ jobs:
       uses: devmasx/merge-branch@v1.3.0
       with:
         target_branch: main
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.PAT_TOKEN }}
