@@ -1,22 +1,17 @@
-name: Dev to Main CI/CD
+name: Feature to Dev CI
 
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
-  build-test-deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Install Docker Compose
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
 
     - name: Install dependencies for backend
       run: |
@@ -38,17 +33,9 @@ jobs:
         cd frontend
         npm test
 
-    - name: Build Docker images
-      run: docker-compose build
-
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-    - name: Push Docker images to Docker Hub
-      run: docker-compose push
-
-    - name: Run end-to-end tests
-      run: |
-        docker-compose up -d
-        # Ajouter ici les commandes de tests E2E spécifiques
-        docker-compose down
+    - name: Merge dev to main
+      if: success()
+      uses: devmasx/merge-branch@v1.3.0
+      with:
+        target_branch: main
+        github_token: ${{ secrets.GITHUB_TOKEN }}
