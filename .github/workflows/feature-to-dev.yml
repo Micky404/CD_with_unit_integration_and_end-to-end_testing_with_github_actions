@@ -1,40 +1,33 @@
-name: Feature to Dev CI
+name: Dev to Main CI/CD
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-<<<<<<< HEAD
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
 
     - name: Install dependencies for backend
       run: |
         cd backend
         npm install
-=======
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js for Backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-        working-directory: backend
->>>>>>> 886f123 (Add feature to dev  workflows)
 
     - name: Run backend unit tests
       run: |
         cd backend
         npm test
 
-<<<<<<< HEAD
     - name: Install dependencies for frontend
       run: |
         cd frontend
@@ -45,35 +38,17 @@ jobs:
         cd frontend
         npm test
 
-    - name: Merge dev to main
-      if: success()
-      uses: devmasx/merge-branch@v1.3.0
-      with:
-        target_branch: main
-        github_token: ${{ secrets.PAT_TOKEN }}
-=======
-      - name: Run Unit Tests (Backend)
-        working-directory: backend
-        run: npm test
+    - name: Build Docker images
+      run: docker-compose build
 
-      - name: Set up Node.js for Frontend
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-        working-directory: frontend
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Install Dependencies (Frontend)
-        working-directory: frontend
-        run: npm install
+    - name: Push Docker images to Docker Hub
+      run: docker-compose push
 
-      - name: Run Unit Tests (Frontend)
-        working-directory: frontend
-        run: npm test
-
-      - name: Merge Dev into Main
-        uses: devops-actions/merge-branch@v2
-        with:
-          from_branch: dev
-          target_branch: main
-          github_token: ${{ secrets.PAT_TOKEN }}
->>>>>>> 886f123 (Add feature to dev  workflows)
+    - name: Run end-to-end tests
+      run: |
+        docker-compose up -d
+        # Ajouter ici les commandes de tests E2E spécifiques
+        docker-compose down
