@@ -1,0 +1,54 @@
+name: Dev to Main CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Install dependencies for backend
+      run: |
+        cd backend
+        npm install
+
+    - name: Run backend unit tests
+      run: |
+        cd backend
+        npm test
+
+    - name: Install dependencies for frontend
+      run: |
+        cd frontend
+        npm install
+
+    - name: Run frontend unit tests
+      run: |
+        cd frontend
+        npm test
+
+    - name: Build Docker images
+      run: docker-compose build
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker images to Docker Hub
+      run: docker-compose push
+
+    - name: Run end-to-end tests
+      run: |
+        docker-compose up -d
+        # Ajouter ici les commandes de tests E2E spécifiques
+        docker-compose down
