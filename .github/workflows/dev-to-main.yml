@@ -1,53 +1,57 @@
 name: worflow for dev
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_run:
+    workflows:
+      - Deature to Dev CI
+    types:
+      - completed
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js for Backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies for Backend
+      - name: Install Docker Compose
         run: |
-          cd backend
-          npm install
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-      - name: Run Backend Unit Tests
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker images
+        run: docker-compose pull
+
+      - name: Start Docker services
+        run: docker-compose up -d
+
+      - name: Check Docker logs
+        run: docker-compose logs
+
+      - name: Wait for frontend to be ready
         run: |
-          cd backend
+          for i in {1..10}; do
+            nc -zv localhost 3001 && echo "Frontend is ready" && exit 0
+            echo "Waiting for frontend..."
+            sleep 5
+          done
+          echo "Frontend did not start in time" && exit 1
+
+      - name: Install packages in the e2e-tests
+        working-directory: e2e-tests
+        run: npm i
+
+      - name: Install mocha globally for E2E tests
+        run: npm i -g mocha
+
+      - name: Run end-to-end tests
+        working-directory: e2e-tests
+        run: |
           npm test
 
-      - name: Setup Node.js for Frontend
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies for Frontend
-        run: |
-          cd frontend
-          npm install
-
-      - name: Run Frontend Unit Tests
-        run: |
-          cd frontend
-          npm test
-
-      - name: Merge dev into main
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: dev
-          branch: main
-          commit-message: Merge dev into main
-          title: Merge dev into main
+      - name: Stop Docker services
+        run: docker-compose down
