@@ -24,7 +24,7 @@ describe("E2E Test", function () {
     console.log("Page loaded, resizing window...");
     await driver.manage().window().setRect({ width: 1510, height: 871 });
     console.log("waiting 10 seconds");
-    await driver.sleep(10000); // Add a 5-second delay
+    await driver.sleep(10000); // Add a 10-second delay
     console.log("Waiting for input element...");
     const input = await driver.wait(until.elementLocated(By.css("input")), 10000);
     console.log("Input element located, clicking...");
