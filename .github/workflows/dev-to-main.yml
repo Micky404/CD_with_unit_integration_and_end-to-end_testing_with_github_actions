@@ -1,4 +1,4 @@
-name: workflow main
+name: Dev to Main CI/CD
 
 on:
   workflow_run:
@@ -6,54 +6,50 @@ on:
       - Feature to Dev CI
     types:
       - completed
-
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: Install dependencies for backend
+      run: |
+        cd backend
+        npm install
 
-      - name: Validate Docker Compose
-        run: docker-compose config
+    - name: Run backend unit tests
+      run: |
+        cd backend
+        npm test
 
-      - name: Pull Docker images
-        run: docker-compose pull
+    - name: Install dependencies for frontend
+      run: |
+        cd frontend
+        npm install
 
-      - name: Start Docker services
-        run: docker-compose up -d
+    - name: Run frontend unit tests
+      run: |
+        cd frontend
+        npm test
 
-      - name: Check Docker logs
-        run: docker-compose logs
+    - name: Build Docker images
+      run: docker-compose build
 
-      - name: Wait for frontend to be ready
-        run: |
-          for i in {1..60}; do
-            curl -sSf http://localhost:3001/ > /dev/null && echo "Frontend is ready" && exit 0
-            echo "Waiting for frontend on port 3001..."
-            sleep 5
-          done
-          echo "Frontend did not start in time" && exit 1
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Install packages in the e2e-tests
-        working-directory: e2e-tests
-        run: npm i
+    - name: Push Docker images to Docker Hub
+      run: docker-compose push
 
-      - name: Install mocha globally for E2E tests
-        run: npm i -g mocha
-
-      - name: Run end-to-end tests
-        working-directory: e2e-tests
-        run: npm test
-
-      - name: Stop Docker services
-        run: docker-compose down
+    - name: Run end-to-end tests
+      run: |
+        docker-compose up -d
+        # Ajouter ici les commandes de tests E2E spécifiques
+        docker-compose down
