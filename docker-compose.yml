@@ -1,5 +1,5 @@
-version: "3.8"
-
+version: '3'
+## testing
 services:
   mongodb:
     image: mongo:latest
@@ -12,14 +12,14 @@ services:
       - app-network
 
   backend:
+    image: mickaelpre/backend:latest  
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
-    image: mickaelpre/backend:latest
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       - mongodb
     environment:
@@ -28,16 +28,16 @@ services:
       - app-network
 
   frontend:
+    image: mickaelpre/frontend:latest  
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: http://backend:3000
+        REACT_APP_API_URL: http://localhost:3001
     container_name: frontend
-    image: mickaelpre/frontend:latest
     restart: always
     ports:
-      - "3001:5000"
+      - "3000:5000"
     depends_on:
       - backend
     networks:
