@@ -16,7 +16,7 @@ ARG REACT_APP_API_URL
 # Set environment variable for build
 ENV REACT_APP_API_URL $REACT_APP_API_URL
 
-# Build the React app
+# Build the React appppp
 RUN npm run build
 
 # Install 'serve' to serve static files

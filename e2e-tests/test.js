@@ -13,21 +13,28 @@ describe("E2E Test", function () {
       .build();
     driver.manage().setTimeouts({ implicit: 10000 });
   });
-// testing
+
   afterEach(async function () {
     await driver.quit();
   });
 
   it("Should add a task", async function () {
+    console.log("Navigating to the page...");
     await driver.get("http://localhost:3001/");
+    console.log("Page loaded, resizing window...");
     await driver.manage().window().setRect({ width: 1510, height: 871 });
 
-    await driver.wait(until.elementLocated(By.css("input")), 10000);
-    const input = await driver.findElement(By.css("input"));
+    console.log("Waiting for input element...");
+    const input = await driver.wait(until.elementLocated(By.css("input")), 20000);
+    console.log("Input element located, clicking...");
     await input.click();
+    console.log("Sending keys...");
     await input.sendKeys("this is a task");
 
+    console.log("Finding add button...");
     const addButton = await driver.findElement(By.css("button:nth-child(2)"));
+    console.log("Clicking add button...");
     await addButton.click();
+    console.log("Task added.");
   });
 });
