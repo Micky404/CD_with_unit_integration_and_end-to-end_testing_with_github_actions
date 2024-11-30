@@ -1,4 +1,4 @@
-name: worflow for dev
+name: worflow main
 
 on:
   workflow_run:
