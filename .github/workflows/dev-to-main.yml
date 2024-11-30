@@ -3,7 +3,7 @@ name: worflow for dev
 on:
   workflow_run:
     workflows:
-      - Deature to Dev CI
+      - Feature to Dev CI
     types:
       - completed
 
