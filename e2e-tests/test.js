@@ -2,7 +2,7 @@ const { Builder, By, until } = require("selenium-webdriver");
 const firefox = require("selenium-webdriver/firefox");
 
 describe("E2E Test", function () {
-  this.timeout(30000);
+  this.timeout(60000);
   let driver;
 
   beforeEach(async function () {
@@ -26,7 +26,7 @@ describe("E2E Test", function () {
     console.log("waiting 10 seconds");
     await driver.sleep(10000); // Add a 5-second delay
     console.log("Waiting for input element...");
-    const input = await driver.wait(until.elementLocated(By.css("input")), 20000);
+    const input = await driver.wait(until.elementLocated(By.css("input")), 10000);
     console.log("Input element located, clicking...");
     await input.click();
     console.log("Sending keys...");
