@@ -13,7 +13,7 @@ describe("E2E Test", function () {
       .build();
     driver.manage().setTimeouts({ implicit: 10000 });
   });
-// test
+// testing
   afterEach(async function () {
     await driver.quit();
   });
