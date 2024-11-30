@@ -11,7 +11,7 @@ describe("E2E Test", function () {
       .forBrowser("firefox")
       .setFirefoxOptions(options)
       .build();
-    driver.manage().setTimeouts({ implicit: 15000 });
+    driver.manage().setTimeouts({ implicit: 10000 });
   });
 
   afterEach(async function () {
@@ -22,7 +22,7 @@ describe("E2E Test", function () {
     await driver.get("http://localhost:3001/");
     await driver.manage().window().setRect({ width: 1510, height: 871 });
 
-    await driver.wait(until.elementLocated(By.css("input")), 15000);
+    await driver.wait(until.elementLocated(By.css("input")), 10000);
     const input = await driver.findElement(By.css("input"));
     await input.click();
     await input.sendKeys("this is a task");
