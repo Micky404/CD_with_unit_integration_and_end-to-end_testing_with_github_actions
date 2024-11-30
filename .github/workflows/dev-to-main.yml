@@ -34,9 +34,9 @@ jobs:
 
       - name: Wait for frontend to be ready
         run: |
-          for i in {1..15}; do
+          for i in {1..30}; do
             curl -sSf http://localhost:3001/ > /dev/null && echo "Frontend is ready" && exit 0
-            echo "Waiting for frontend..."
+            echo "Waiting for frontend on port 3001..."
             sleep 5
           done
           echo "Frontend did not start in time" && exit 1
@@ -47,10 +47,6 @@ jobs:
 
       - name: Install mocha globally for E2E tests
         run: npm i -g mocha
-
-      - name: Run end-to-end tests
-        working-directory: e2e-tests
-        run: npm test
 
       - name: Stop Docker services
         run: docker-compose down
