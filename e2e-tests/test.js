@@ -19,7 +19,7 @@ describe("E2E Test", function () {
   });
 
   it("Should add a task", async function () {
-    console.log("Navigating to the page...");
+    console.log("Navigating to the page......");
     await driver.get("http://localhost:3001/");
     console.log("Page loaded, resizing window...");
     await driver.manage().window().setRect({ width: 1510, height: 871 });
