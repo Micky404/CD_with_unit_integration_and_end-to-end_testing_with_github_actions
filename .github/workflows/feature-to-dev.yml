@@ -33,11 +33,9 @@ jobs:
         cd frontend
         npm test
 
-    - name: Merge dev into main
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
-          base: dev
-          branch: main
-          commit-message: Merge dev into main
-          title: Merge dev into main
+    - name: Merge dev to main
+      if: success()
+      uses: devmasx/merge-branch@v1.3.0
+      with:
+        target_branch: main
+        github_token: ${{ secrets.PAT_TOKEN }}
