@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"  # Assurez-vous que la version est compatible avec votre Docker Compose
 
 services:
   mongodb:
@@ -27,27 +27,21 @@ services:
     networks:
       - app-network
 
-frontend:
-  build:
-    context: ./frontend
-    dockerfile: Dockerfile
-    args:
-      REACT_APP_API_URL: http://backend:3000
-  container_name: frontend
-  image: mickaelpre/frontend:latest
-  restart: always
-  ports:
-    - "3001:5000"
-  depends_on:
-    - backend
-  networks:
-    - app-network
-  healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost:5000"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
-
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://backend:3000
+    container_name: frontend
+    image: mickaelpre/frontend:latest
+    restart: always
+    ports:
+      - "3001:5000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
 volumes:
   mongo-data:
